@@ -100,13 +100,9 @@
     </a-camera>
     <a-entity environment="preset: forest; lighting: none; shadow: none; lightPosition: 0 2.15 0"
       hide-in-ar-mode></a-entity>
-    <!--  if using the animation-mixer component, make sure to load the external library in head.html-->
-    <!-- <a-entity id="model" gltf-model="#animatedModel" class="cantap" scale="3 3 3"
-      animation-mixer="clip: Armature|mixamo.com|Layer0; loop: repeat" xrextras-hold-drag xrextras-two-finger-rotate
-      xrextras-pinch-scale shadow="cast: true; receive: false">
-    </a-entity> -->
 
-    <a-entity id="model" scale="3 3 3" rotation="0 -40 0">
+
+    <a-entity id="model" scale="2 2 2" position="1 0 -3" rotation="0 -40 0">
       <a-entity gltf-model="#animatedModel"
                 animation-mixer
                 shadow="cast: true; receive: false"></a-entity>
@@ -130,16 +126,15 @@
                       shadowCameraBottom: -5;
                       shadowCameraTop: 5;"
                id="light"
-               target="dino"
+               target="model"
                position="-5 3 1.5"></a-light>
 
     <!-- This shadow-receiving plane is only visible in AR mode. -->
-    <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50"
+    <a-plane position="0.5 0 3" rotation="0 0 0" width="1080" height="800"
                shadow="receive: true"
                ar-shadows="opacity: 0.3"
                visible="false"></a-plane>
-    <!-- <a-plane id="ground" position="0 0 0" rotation="-90 0 0" width="50" height="50" material="shader: shadow" shadow>
-    </a-plane> -->
+    </a-plane>
   </a-scene>
 </body>
 
