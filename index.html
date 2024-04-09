@@ -1,0 +1,146 @@
+<html>
+
+<head>
+
+  <script>
+    // WebXR requires HTTPS, so the site doesn't work if someone manually enters
+    // the URL and ends up using HTTP. To work around this, force redirect from
+    // http to https for non-localhost addresses.
+    if (window.location.protocol == "http:" &&
+      window.location.hostname != "localhost" &&
+      window.location.hostname != "127.0.0.1" &&
+      window.location.hostname != "[::1]") {
+      window.location = window.location.href.replace('http:', 'https:');
+    }
+  </script>
+
+  <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-extras@^6.1.1/dist/aframe-extras.min.js"></script> -->
+  <!-- import the webpage's javascript files -->
+  <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+  <script>
+    // Define a few custom components useful for AR mode. While these are somewhat reusable,
+    // I recommend checking if there are officially supported alternatives before copying
+    // these into new projects.
+
+    // See also https://github.com/aframevr/aframe/pull/4356
+    AFRAME.registerComponent('hide-in-ar-mode', {
+      // Set this object invisible while in AR mode.
+      init: function () {
+        this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+          this.wasVisible = this.el.getAttribute('visible');
+          if (this.el.sceneEl.is('ar-mode')) {
+            this.el.setAttribute('visible', false);
+          }
+        });
+        this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+          if (this.wasVisible) this.el.setAttribute('visible', true);
+        });
+      }
+    });
+
+    AFRAME.registerComponent('ar-shadows', {
+      // Swap an object's material to a transparent shadows-only material while
+      // in AR mode. Intended for use with a ground plane. The object is also
+      // set visible while in AR mode, this is useful if it's hidden in other
+      // modes due to them using a 3D environment.
+      schema: {
+        opacity: { default: 0.3 }
+      },
+      init: function () {
+        this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+          this.wasVisible = this.el.getAttribute('visible');
+          if (this.el.sceneEl.is('ar-mode')) {
+            this.savedMaterial = this.el.object3D.children[0].material;
+            this.el.object3D.children[0].material = new THREE.ShadowMaterial();
+            this.el.object3D.children[0].material.opacity = this.data.opacity;
+            this.el.setAttribute('visible', true);
+          }
+        });
+        this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+          if (this.savedMaterial) {
+            this.el.object3D.children[0].material = this.savedMaterial;
+            this.savedMaterial = null;
+          }
+          if (!this.wasVisible) this.el.setAttribute('visible', false);
+        });
+      }
+    });
+  </script>
+  <script>
+    function setSize(scale) {
+      document.getElementById('dino').setAttribute('scale', { x: scale, y: scale, z: scale });
+    }
+    document.getElementById('btn_full').onclick = setSize.bind(this, 1);
+    document.getElementById('btn_half').onclick = setSize.bind(this, 0.5);
+    document.getElementById('btn_quarter').onclick = setSize.bind(this, 0.25);
+  </script>
+</head>
+
+<body>
+  <a-scene renderer="colorManagement: true;">
+    <a-assets>
+      <a-asset-item id="animatedModel" src="models/capoeira.glb"></a-asset-item>
+    </a-assets>
+
+    <!--
+      position: x y z
+      x - left to right
+      y - up and down
+      z - forward and backward
+
+      rotation: x y z
+      rotation: x y z
+     -->
+
+    <!-- The raycaster will emit mouse events on scene objects specified with the cantap class -->
+    <a-camera id="camera" position="0 2 9" raycaster="objects: .cantap" >
+    </a-camera>
+    <a-entity environment="preset: forest; lighting: none; shadow: none; lightPosition: 0 2.15 0"
+      hide-in-ar-mode></a-entity>
+    <!--  if using the animation-mixer component, make sure to load the external library in head.html-->
+    <!-- <a-entity id="model" gltf-model="#animatedModel" class="cantap" scale="3 3 3"
+      animation-mixer="clip: Armature|mixamo.com|Layer0; loop: repeat" xrextras-hold-drag xrextras-two-finger-rotate
+      xrextras-pinch-scale shadow="cast: true; receive: false">
+    </a-entity> -->
+
+    <a-entity id="model" scale="3 3 3" rotation="0 -40 0">
+      <a-entity gltf-model="#animatedModel"
+                animation-mixer
+                shadow="cast: true; receive: false"></a-entity>
+    </a-entity>
+
+    <a-entity light="type: directional;
+           intensity: 0.8;
+           castShadow: true;
+           shadowMapHeight:2048;
+           shadowMapWidth:2048;
+           shadowCameraTop: 10;
+           target: #model;" position="1 4.3 2.5" xrextras-attach="target: model; offset: 1 15 3;" shadow>
+    </a-entity>
+
+    <a-light type="directional"
+               light="castShadow: true;
+                      shadowMapHeight: 1024;
+                      shadowMapWidth: 1024;
+                      shadowCameraLeft: -7;
+                      shadowCameraRight: 5;
+                      shadowCameraBottom: -5;
+                      shadowCameraTop: 5;"
+               id="light"
+               target="dino"
+               position="-5 3 1.5"></a-light>
+
+    <!-- This shadow-receiving plane is only visible in AR mode. -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50"
+               shadow="receive: true"
+               ar-shadows="opacity: 0.3"
+               visible="false"></a-plane>
+    <!-- <a-plane id="ground" position="0 0 0" rotation="-90 0 0" width="50" height="50" material="shader: shadow" shadow>
+    </a-plane> -->
+  </a-scene>
+</body>
+
+</html>
