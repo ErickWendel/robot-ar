@@ -102,11 +102,11 @@
       hide-in-ar-mode></a-entity>
 
 
-    <a-entity id="model" scale="2 2 2" position="1 0 -3" rotation="0 -40 0">
-      <a-entity gltf-model="#animatedModel"
+
+      <a-entity id="model" scale="1 1 1" position="1 0 -3" rotation="0 -40 0" gltf-model="#animatedModel"
                 animation-mixer
                 shadow="cast: true; receive: false"></a-entity>
-    </a-entity>
+
 
     <a-entity light="type: directional;
            intensity: 0.8;
@@ -130,7 +130,7 @@
                position="-5 3 1.5"></a-light>
 
     <!-- This shadow-receiving plane is only visible in AR mode. -->
-    <a-plane position="0.5 0 3" rotation="0 0 0" width="1080" height="800"
+    <a-plane height="15" width="15" position="0 0 -3" rotation="-90 0 0"
                shadow="receive: true"
                ar-shadows="opacity: 0.3"
                visible="false"></a-plane>
