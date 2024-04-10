@@ -99,17 +99,16 @@
      -->
 
     <!-- The raycaster will emit mouse events on scene objects specified with the cantap class -->
-    <a-camera id="camera" position="0 2 9" raycaster="objects: .cantap" >
+    <a-camera id="camera" position="0 2 9" raycaster="objects: .cantap">
     </a-camera>
     <a-entity environment="preset: forest; lighting: none; shadow: none; lightPosition: 0 2.15 0"
       hide-in-ar-mode></a-entity>
 
 
 
-      <a-entity id="model" scale="3 3 3" position="1 0 -3" rotation="0 -40 0" gltf-model="#animatedModel"
-                animation-mixer
-                shadow="cast: true; receive: false"
-                ar-shadows></a-entity>
+    <a-entity id="model" scale="3 3 3" position="1 0 -3" rotation="0 -40 0" gltf-model="#animatedModel" animation-mixer
+      shadow="cast: true; receive: false" xrextras-hold-drag xrextras-two-finger-rotate xrextras-pinch-scale ar-shadows>
+    </a-entity>
 
 
     <a-entity light="type: directional;
@@ -121,23 +120,17 @@
            target: #model;" position="1 4.3 2.5" xrextras-attach="target: model; offset: 1 15 3;" shadow>
     </a-entity>
 
-    <a-light type="directional"
-               light="castShadow: true;
+    <a-light type="directional" light="castShadow: true;
                       shadowMapHeight: 1024;
                       shadowMapWidth: 1024;
                       shadowCameraLeft: -7;
                       shadowCameraRight: 5;
                       shadowCameraBottom: -5;
-                      shadowCameraTop: 5;"
-               id="light"
-               target="model"
-               position="-5 3 1.5"></a-light>
+                      shadowCameraTop: 5;" id="light" target="model" position="-5 3 1.5"></a-light>
 
     <!-- This shadow-receiving plane is only visible in AR mode. -->
-    <a-plane height="15" width="15" position="0 0 -3" rotation="-90 0 0"
-               shadow="receive: true"
-               ar-shadows="opacity: 0.3"
-               visible="false"></a-plane>
+    <a-plane height="15" width="15" position="0 0 -3" rotation="-90 0 0" shadow="receive: true"
+      ar-shadows="opacity: 0.3" visible="false"></a-plane>
     </a-plane>
   </a-scene>
 </body>
