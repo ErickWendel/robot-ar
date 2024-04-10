@@ -14,18 +14,11 @@
     }
   </script>
 
-  <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-  <script src="https://unpkg.com/aframe-extras@^6.1.1/dist/aframe-extras.min.js"></script> -->
-  <!-- import the webpage's javascript files -->
   <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
   <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
   <script>
-    // Define a few custom components useful for AR mode. While these are somewhat reusable,
-    // I recommend checking if there are officially supported alternatives before copying
-    // these into new projects.
-
-    // See also https://github.com/aframevr/aframe/pull/4356
+    // Define a few custom components useful for AR mode.
     AFRAME.registerComponent('hide-in-ar-mode', {
       // Set this object invisible while in AR mode.
       init: function () {
@@ -57,6 +50,9 @@
             this.el.object3D.children[0].material = new THREE.ShadowMaterial();
             this.el.object3D.children[0].material.opacity = this.data.opacity;
             this.el.setAttribute('visible', true);
+            // Scale down the model to 1x1x1
+            this.savedScale = this.el.getAttribute('scale');
+            this.el.setAttribute('scale', '1 1 1');
           }
         });
         this.el.sceneEl.addEventListener('exit-vr', (ev) => {
@@ -65,18 +61,25 @@
             this.savedMaterial = null;
           }
           if (!this.wasVisible) this.el.setAttribute('visible', false);
+          // Restore the original scale when exiting AR mode
+          if (this.savedScale) {
+            this.el.setAttribute('scale', this.savedScale);
+            this.savedScale = null;
+          }
         });
       }
     });
   </script>
   <script>
     function setSize(scale) {
-      document.getElementById('dino').setAttribute('scale', { x: scale, y: scale, z: scale });
+      document.getElementById('model').setAttribute('scale', { x: scale, y: scale, z: scale });
     }
     document.getElementById('btn_full').onclick = setSize.bind(this, 1);
     document.getElementById('btn_half').onclick = setSize.bind(this, 0.5);
     document.getElementById('btn_quarter').onclick = setSize.bind(this, 0.25);
   </script>
+
+
 </head>
 
 <body>
@@ -103,9 +106,10 @@
 
 
 
-      <a-entity id="model" scale="1 1 1" position="1 0 -3" rotation="0 -40 0" gltf-model="#animatedModel"
+      <a-entity id="model" scale="3 3 3" position="1 0 -3" rotation="0 -40 0" gltf-model="#animatedModel"
                 animation-mixer
-                shadow="cast: true; receive: false"></a-entity>
+                shadow="cast: true; receive: false"
+                ar-shadows></a-entity>
 
 
     <a-entity light="type: directional;
@@ -137,5 +141,3 @@
     </a-plane>
   </a-scene>
 </body>
-
-</html>
